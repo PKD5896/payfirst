@@ -10,7 +10,8 @@
     "check:flagsmith": "tsx --env-file=.env.local scripts/check-flagsmith.ts",
     "test": "vitest run",
     "setup:experiment": "tsx --env-file=.env.local scripts/setup-experiment.ts",
-    "loadtest": "tsx --env-file=.env.local scripts/load-test.ts"
+    "loadtest": "tsx --env-file=.env.local scripts/load-test.ts",
+    "test:e2e": "next build && playwright test"
   },
   "dependencies": {
     "@flagsmith/nodejs": "^9.5.0",
