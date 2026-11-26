@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "check:flagsmith": "tsx --env-file=.env.local scripts/check-flagsmith.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "setup:experiment": "tsx --env-file=.env.local scripts/setup-experiment.ts"
   },
   "dependencies": {
     "@flagsmith/nodejs": "^9.5.0",
