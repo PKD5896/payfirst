@@ -3,6 +3,7 @@ import { findProduct, type Product } from "./catalog";
 import { quote, type PaymentMethod, type Quote, type Variant } from "./nudges";
 
 export const MAX_QTY = 5;
+export const MAX_BODY_BYTES = 1024; // a valid order request is ~70 bytes
 
 export type OrderRequest = { productId: string; qty: number; paymentMethod: PaymentMethod };
 
@@ -44,11 +45,18 @@ export function buildOrder(req: OrderRequest, variant: Variant, id: string, now 
   };
 }
 
-// Survives Next.js dev hot reloads by living on globalThis.
+// Bounded so heavy traffic can't grow memory forever: the oldest orders are evicted first
+// (a Map iterates in insertion order). Survives Next.js dev hot reloads via globalThis.
+export const MAX_STORED_ORDERS = 5_000;
 const store = ((globalThis as { __payfirstOrders?: Map<string, Order> }).__payfirstOrders ??= new Map());
 
 export function saveOrder(order: Order): void {
   store.set(order.id, order);
+  while (store.size > MAX_STORED_ORDERS) store.delete(store.keys().next().value!);
+}
+
+export function storedOrderCount(): number {
+  return store.size;
 }
 
 export function getOrder(id: string): Order | undefined {

@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { MAX_QTY, buildOrder, getOrder, parseOrderRequest, saveOrder } from "./orders";
+import {
+  MAX_QTY,
+  MAX_STORED_ORDERS,
+  buildOrder,
+  getOrder,
+  parseOrderRequest,
+  saveOrder,
+  storedOrderCount,
+} from "./orders";
 import { isValidVisitorId } from "./visitor";
 
 describe("parseOrderRequest", () => {
@@ -27,6 +35,14 @@ describe("buildOrder", () => {
     const order = buildOrder({ productId: "cotton-kurta", qty: 2, paymentMethod: "upi" }, "upi_discount", "o1");
     expect(order.quote).toEqual({ subtotal: 2398, delivery: 40, discount: 25, total: 2413 });
     expect(order.variant).toBe("upi_discount");
+  });
+
+  it("evicts the oldest orders beyond the store cap", () => {
+    const req = { productId: "cotton-kurta", qty: 1, paymentMethod: "upi" } as const;
+    for (let i = 0; i < MAX_STORED_ORDERS + 10; i++) saveOrder(buildOrder(req, "control", `cap-${i}`));
+    expect(storedOrderCount()).toBe(MAX_STORED_ORDERS);
+    expect(getOrder("cap-0")).toBeUndefined();
+    expect(getOrder(`cap-${MAX_STORED_ORDERS + 9}`)).toBeDefined();
   });
 
   it("round-trips through the store", () => {
