@@ -11,7 +11,9 @@
     "test": "vitest run",
     "setup:experiment": "tsx --env-file=.env.local scripts/setup-experiment.ts",
     "loadtest": "tsx --env-file=.env.local scripts/load-test.ts",
-    "test:e2e": "next build && playwright test"
+    "test:e2e": "next build && playwright test",
+    "simulate": "tsx --env-file=.env.local scripts/simulate.ts",
+    "experiment": "tsx --env-file=.env.local scripts/experiment.ts"
   },
   "dependencies": {
     "@flagsmith/nodejs": "^9.5.0",
