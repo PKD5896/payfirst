@@ -1,15 +1,14 @@
 // Order validation and an in-memory order store (demo only: no database, resets on restart).
-import { findProduct, type Product } from "./catalog";
+import { MAX_QTY, findProduct, type Product } from "./catalog";
 import { quote, type PaymentMethod, type Quote, type Variant } from "./nudges";
 
-export const MAX_QTY = 5;
 export const MAX_BODY_BYTES = 1024; // a valid order request is ~70 bytes
 
 export type OrderRequest = { productId: string; qty: number; paymentMethod: PaymentMethod };
 
 export type Order = {
   id: string;
-  product: Pick<Product, "id" | "name" | "price" | "emoji">;
+  product: Pick<Product, "id" | "name" | "price">;
   qty: number;
   paymentMethod: PaymentMethod;
   variant: Variant;
@@ -36,7 +35,7 @@ export function buildOrder(req: OrderRequest, variant: Variant, id: string, now 
   if (!product) throw new Error(`Unknown product ${req.productId}`);
   return {
     id,
-    product: { id: product.id, name: product.name, price: product.price, emoji: product.emoji },
+    product: { id: product.id, name: product.name, price: product.price },
     qty: req.qty,
     paymentMethod: req.paymentMethod,
     variant,

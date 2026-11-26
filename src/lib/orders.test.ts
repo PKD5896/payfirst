@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { MAX_QTY } from "./catalog";
 import {
-  MAX_QTY,
   MAX_STORED_ORDERS,
   buildOrder,
   getOrder,
@@ -8,7 +8,7 @@ import {
   saveOrder,
   storedOrderCount,
 } from "./orders";
-import { isValidVisitorId } from "./visitor";
+import { isValidVisitorId, safeNext } from "./visitor";
 
 describe("parseOrderRequest", () => {
   const valid = { productId: "cotton-kurta", qty: 1, paymentMethod: "upi" };
@@ -62,4 +62,17 @@ describe("isValidVisitorId", () => {
   it.each([undefined, "", "short", "has spaces in it", "x".repeat(65), "<script>alert(1)</script>"])("rejects %j", (id) => {
     expect(isValidVisitorId(id)).toBe(false);
   });
+});
+
+describe("safeNext", () => {
+  it("allows same-site relative paths", () => {
+    expect(safeNext("/checkout?product=cotton-kurta&debug=1")).toBe("/checkout?product=cotton-kurta&debug=1");
+  });
+
+  it.each([null, "", "https://evil.example", "//evil.example", "/\\evil.example", "javascript:alert(1)"])(
+    "falls back to / for %j",
+    (next) => {
+      expect(safeNext(next)).toBe("/");
+    },
+  );
 });

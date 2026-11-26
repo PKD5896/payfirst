@@ -82,12 +82,14 @@ Environment: Development, Flagsmith-managed warehouse.
 ## 6. Project structure
 
 ```
-src/app/            page.tsx (store) · checkout/ · order/[id]/ · api/orders/route.ts
-src/lib/            flagsmith.ts (server client, local evaluation) · nudges.ts (variant → offer)
-src/middleware.ts   anonymous visitor ID
-scripts/            simulate.ts · agent/ (results, stats, impact, explain, index)
-docs/               DESIGN.md
-.env.example        variable names only, never real keys
+src/app/               page.tsx (store) · checkout/ · order/[id]/ · api/orders/route.ts · reset-shopper/
+src/components/        ProductTile (Devanagari product tiles)
+src/lib/               flagsmith.ts (server client, local evaluation, resilience) · nudges.ts (variant → offer)
+src/proxy.ts           anonymous visitor ID (Next.js 16 "proxy", formerly middleware)
+src/instrumentation.ts loads the Flagsmith environment at server start
+scripts/               setup-experiment.ts · load-test.ts · simulate.ts · agent/
+docs/                  DESIGN.md · PERFORMANCE.md
+.env.example           variable names only, never real keys
 ```
 
 Environment variables (in `.env.local`, never committed): Flagsmith environment key, server-side key, Admin API key, experiment ID, Gemini API key.
